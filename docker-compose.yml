@@ -1,0 +1,110 @@
+# PC-Free Multi-OS Unified Docker Compose
+# Run individual OS stacks via: docker-compose -f <os>.yml up -d
+# Or run all virtual machines in parallel via: docker-compose up -d
+
+services:
+  windows:
+    image: dockurr/windows
+    container_name: pc-free-windows
+    environment:
+      VERSION: "10"
+      USERNAME: ${WINDOWS_USERNAME:-pcuser}
+      PASSWORD: ${WINDOWS_PASSWORD:-pcpassword123}
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8006:8006" # Windows Web Interface (noVNC)
+      - "3389:3389/tcp"
+    volumes:
+      - /tmp/docker-data:/mnt/disco1
+      - windows-data:/storage
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    restart: always
+
+  linux:
+    image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    container_name: pc-free-linux
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+      TITLE: PC-Free Linux Desktop
+    ports:
+      - "8007:3000" # Linux Web Interface (WebRTC/noVNC)
+    volumes:
+      - linux-config:/config
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    shm_size: "2gb"
+    restart: always
+
+  android:
+    image: redroid/redroid:11.0.0-latest
+    container_name: pc-free-android
+    privileged: true
+    ports:
+      - "5555:5555"
+    volumes:
+      - android-data:/data
+    command:
+      - androidboot.redroid_width=720
+      - androidboot.redroid_height=1280
+      - androidboot.redroid_fps=60
+    restart: always
+
+  android-web:
+    image: wsourdeau/web-scrcpy:latest
+    container_name: pc-free-android-web
+    ports:
+      - "8008:8000" # Android Web Interface
+    environment:
+      ADB_SERVER_HOST: android
+    depends_on:
+      - android
+    restart: always
+
+  macos:
+    image: dockurr/macos
+    container_name: pc-free-macos
+    environment:
+      VERSION: "catalina"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8009:8006" # macOS Web Interface
+    volumes:
+      - macos-data:/storage
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    restart: always
+
+  ios-web:
+    image: lscr.io/linuxserver/webtop:ubuntu-mate
+    container_name: pc-free-ios-web
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+      TITLE: PC-Free iOS Web Environment
+    ports:
+      - "8010:3000" # iOS Web Interface
+    volumes:
+      - ios-data:/config
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    shm_size: "2gb"
+    restart: always
+
+volumes:
+  windows-data:
+  linux-config:
+  android-data:
+  macos-data:
+  ios-data:
