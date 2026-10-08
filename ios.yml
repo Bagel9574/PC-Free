@@ -1,0 +1,21 @@
+# PC-Free - iOS Simulator / Web Environment Configuration
+services:
+  ios-web:
+    image: lscr.io/linuxserver/webtop:ubuntu-mate
+    container_name: pc-free-ios-web
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+      TITLE: PC-Free iOS Web Environment
+    ports:
+      - "8010:3000" # Web UI Touch Interface
+    volumes:
+      - ios-data:/config
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    shm_size: "2gb"
+    restart: always
+
+volumes:
+  ios-data:

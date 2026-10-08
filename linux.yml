@@ -1,0 +1,26 @@
+# PC-Free - Linux Desktop Virtual Machine / Web Environment
+services:
+  linux:
+    image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    container_name: pc-free-linux
+    security_opt:
+      - seccomp:unconfined # Required for chrome/electron apps in container
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+      SUBFOLDER: /
+      TITLE: PC-Free Linux Desktop
+    volumes:
+      - linux-config:/config
+      - /var/run/docker.sock:/var/run/docker.sock # Optional for nested docker
+    ports:
+      - "8007:3000" # Web Desktop HTTP interface (noVNC / WebRTC)
+      - "8007:3001" # Web Desktop HTTPS interface
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    shm_size: "2gb" # High memory allocation to prevent browser frame drops
+    restart: always
+
+volumes:
+  linux-config:

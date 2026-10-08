@@ -1,0 +1,31 @@
+# PC-Free - Android Virtual Machine Configuration
+services:
+  android:
+    image: redroid/redroid:11.0.0-latest
+    container_name: pc-free-android
+    privileged: true
+    ports:
+      - "5555:5555" # ADB port
+    volumes:
+      - android-data:/data
+    command:
+      - androidboot.redroid_width=720
+      - androidboot.redroid_height=1280
+      - androidboot.redroid_dpi=320
+      - androidboot.redroid_fps=60
+      - androidboot.use_mali_gpu=0
+    restart: always
+
+  android-web:
+    image: wsourdeau/web-scrcpy:latest
+    container_name: pc-free-android-web
+    ports:
+      - "8008:8000" # Web UI port for interactive Android screen
+    environment:
+      ADB_SERVER_HOST: android
+    depends_on:
+      - android
+    restart: always
+
+volumes:
+  android-data:

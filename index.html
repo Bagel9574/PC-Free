@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-adsense-account" content="ca-pub-9208880316800976">
-    <title>PC-Free</title>
+    <title>PC-Free — Browser Virtual Machine Platform</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9208880316800976" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -30,6 +31,8 @@
           </div>
           <div class="nav-links-pill">
             <a href="index.html" class="nav-link active">HOME</a>
+            <a href="vm.html" class="nav-link">VM LAUNCHER</a>
+            <a href="quickstart.html" class="nav-link">QUICKSTART</a>
             <a href="Compare.html" class="nav-link">COMPARISON</a>
             <a href="faq.html" class="nav-link">FAQ</a>
             <a href="docs.html" class="nav-link">DOCS</a>
@@ -39,28 +42,42 @@
 
         <div class="hero-text">
           <div class="hero-text-inner">
-            <a href="quickstart.html" class="badge-link">
-              PC-FREE
+            <a href="vm.html" class="badge-link">
+              MULTI-OS VIRTUAL MACHINE PLATFORM
               <span class="arrow">→</span>
             </a>
 
             <h1 class="hero-headline">
-              Run Windows 10 Free in Your Browser
+              Run Linux, Android, Windows, macOS & iOS Free in Your Browser
             </h1>
 
             <p class="hero-subtext">
-              Deploy a complete Windows 10 environment using Docker & GitHub Codespaces. No PC required.
+              Zero lag, full speed, KVM accelerated virtual machines powered by Docker & GitHub Codespaces. No local hardware required.
             </p>
 
-            <a href="quickstart.html" class="cta-button">
-              Get your free PC now
-              <span class="arrow">→</span>
-            </a>
+            <div class="os-pills">
+              <span class="os-tag"><i class="ti ti-brand-windows"></i> Windows</span>
+              <span class="os-tag"><i class="ti ti-brand-ubuntu"></i> Linux</span>
+              <span class="os-tag"><i class="ti ti-brand-android"></i> Android</span>
+              <span class="os-tag"><i class="ti ti-brand-apple"></i> macOS</span>
+              <span class="os-tag"><i class="ti ti-device-mobile"></i> iOS</span>
+            </div>
+
+            <div style="margin-top: 1rem; display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="vm.html" class="cta-button">
+                Launch Browser VM
+                <span class="arrow">→</span>
+              </a>
+              <a href="quickstart.html" class="cta-button secondary-cta">
+                Quick Start Guide
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>

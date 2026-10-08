@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC-Free — Virtual Machine Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #f0f0ee;
+  --headline:     #111827;
+  --nav:          #404040;
+  --muted:        #9ca3af;
+  --accent:       #3b82f6;
+  --accent-lt:    #60a5fa;
+  --accent-dk:    #2563eb;
+  --glass-bg:     rgba(255,255,255,0.65);
+  --glass-border: rgba(255,255,255,0.85);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--headline);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  background: rgba(240,240,238,0.9);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.logo-group {
+  display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--headline);
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.1rem;
+}
+
+.logo-badge {
+  background: #EDEDED; padding: 6px 12px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.nav-links-pill {
+  display: flex; align-items: center; gap: 1.5rem; padding: .6rem 1.5rem;
+  border-radius: .75rem; background-color: #EDEDED;
+}
+
+.nav-link {
+  font-size: .875rem; font-weight: 500; color: #404040; text-decoration: none;
+  transition: color .2s;
+}
+.nav-link:hover, .nav-link.active { color: #111827; }
+
+/* VM LAYOUT */
+.vm-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  flex: 1;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.sidebar {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-header {
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.os-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.os-card:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-1px);
+}
+
+.os-card.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent-lt);
+  box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+}
+
+.os-card.active .os-desc {
+  color: rgba(255,255,255,0.8);
+}
+
+.os-icon {
+  font-size: 24px;
+}
+
+.os-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.os-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.os-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.main-view {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.vm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.vm-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-dk); }
+.btn-secondary { background: rgba(0,0,0,0.06); color: var(--headline); }
+.btn-secondary:hover { background: rgba(0,0,0,0.1); }
+
+.screen-frame {
+  flex: 1;
+  min-height: 600px;
+  background: #111;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  min-height: 600px;
+}
+
+@media (max-width: 900px) {
+  .vm-container { grid-template-columns: 1fr; }
+  .screen-frame { min-height: 400px; }
+  iframe { min-height: 400px; }
+}
+</style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a href="index.html" class="logo-group">
+      <div class="logo-badge">
+        <svg width="18" height="18" viewBox="0 0 256 256" fill="none">
+          <path fill="rgb(84, 84, 84)" d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z"/>
+        </svg>
+      </div>
+      <span>PC-Free Launcher</span>
+    </a>
+
+    <div class="nav-links-pill">
+      <a href="index.html" class="nav-link">HOME</a>
+      <a href="vm.html" class="nav-link active">VM LAUNCHER</a>
+      <a href="quickstart.html" class="nav-link">QUICKSTART</a>
+      <a href="Compare.html" class="nav-link">COMPARISON</a>
+      <a href="docs.html" class="nav-link">DOCS</a>
+    </div>
+  </header>
+
+  <!-- MAIN VM CONTAINER -->
+  <main class="vm-container">
+    <!-- OS SELECTOR SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class="ti ti-devices"></i> Select Operating System
+      </div>
+
+      <div class="os-card active" onclick="switchOS('windows', 'Windows 10/11', 8006, 'ti-brand-windows')">
+        <i class="ti ti-brand-windows os-icon"></i>
+        <div class="os-info">
+          <span class="os-title">Windows 10 / 11</span>
+          <span class="os-desc">KVM • Port 8006</span>
+        </div>
+      </div>
+
+      <div class="os-card" onclick="switchOS('linux', 'Linux Desktop', 8007, 'ti-brand-ubuntu')">
+        <i class="ti ti-brand-ubuntu os-icon"></i>
+        <div class="os-info">
+          <span class="os-title">Linux Desktop</span>
+          <span class="os-desc">Ubuntu / XFCE • Port 8007</span>
+        </div>
+      </div>
+
+      <div class="os-card" onclick="switchOS('android', 'Android OS', 8008, 'ti-brand-android')">
+        <i class="ti ti-brand-android os-icon"></i>
+        <div class="os-info">
+          <span class="os-title">Android OS</span>
+          <span class="os-desc">Redroid / Scrcpy • Port 8008</span>
+        </div>
+      </div>
+
+      <div class="os-card" onclick="switchOS('macos', 'macOS Catalina', 8009, 'ti-brand-apple')">
+        <i class="ti ti-brand-apple os-icon"></i>
+        <div class="os-info">
+          <span class="os-title">macOS</span>
+          <span class="os-desc">KVM macOS • Port 8009</span>
+        </div>
+      </div>
+
+      <div class="os-card" onclick="switchOS('ios', 'iOS Web Environment', 8010, 'ti-device-mobile')">
+        <i class="ti ti-device-mobile os-icon"></i>
+        <div class="os-info">
+          <span class="os-title">iOS Web</span>
+          <span class="os-desc">Touch Simulator • Port 8010</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- VM STREAM VIEW -->
+    <section class="main-view">
+      <div class="vm-header">
+        <div class="vm-title-group">
+          <h2 id="selected-os-title" style="font-family:'Sora',sans-serif;">Windows 10 / 11</h2>
+          <span class="status-badge"><span class="status-dot"></span> Ready to Stream</span>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-secondary" onclick="reloadFrame()"><i class="ti ti-refresh"></i> Refresh Stream</button>
+          <a id="external-link" href="http://localhost:8006" target="_blank" class="btn btn-primary"><i class="ti ti-external-link"></i> Open Tab</a>
+        </div>
+      </div>
+
+      <div class="screen-frame">
+        <iframe id="vm-frame" src="http://localhost:8006"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentPort = 8006;
+
+    function switchOS(osKey, osTitle, port, iconClass) {
+      currentPort = port;
+      document.getElementById('selected-os-title').innerText = osTitle;
+
+      // Update active sidebar state
+      document.querySelectorAll('.os-card').forEach(card => card.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const targetUrl = `http://localhost:${port}`;
+      document.getElementById('vm-frame').src = targetUrl;
+      document.getElementById('external-link').href = targetUrl;
+    }
+
+    function reloadFrame() {
+      const frame = document.getElementById('vm-frame');
+      frame.src = frame.src;
+    }
+  </script>
+</body>
+</html>
